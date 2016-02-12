@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+enum Enum {
+  ENUM_VALUE_DEFAULT = 0;
+
+  ENUM_VALUE_1 = 1;
+  ENUM_VALUE_2 = 2;
+}
+
+message Message {
+  optional int64 id = 1;
+  optional string field_with_long_name = 2;
+
+  optional Enum enum = 3;
+}
