@@ -27,7 +27,8 @@ func main() {
 
 func Handler(w http.ResponseWriter, r *http.Request) {
 	m := &pb.Message{
-		FieldWithLongName: "hello",
+		Id:                222,
+		FieldWithLongName: "hello1",
 	}
 	marshaler.Marshal(w, m)
 }

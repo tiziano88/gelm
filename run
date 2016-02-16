@@ -1,2 +1,1 @@
-cd client && elm reactor
-go run server/main.go
+go run run.go
