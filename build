@@ -1,1 +1,3 @@
-~/src/protobuf/src/protoc --go_out=./server/ --elm_out=./client/ ./proto/*.proto
+(~/src/protobuf/src/protoc --go_out=./server/ --elm_out=./client/ ./proto/*.proto)
+(cd client && elm make --output out/index.html index.elm)
+(cd server && go build -o out/server)

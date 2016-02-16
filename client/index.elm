@@ -8,6 +8,8 @@ import Json.Decode as Decode exposing ((:=))
 import StartApp
 import Task exposing (..)
 
+import Gelm
+
 
 app =
   StartApp.start
@@ -42,13 +44,21 @@ init =
 
 view : Signal.Address Action -> Model -> Html
 view address model =
-  text "Hello World"
+  div
+    [ onClick address Load ]
+    [ text "Hello World 2" ]
 
 
 type Action
   = Nop
+  | Load
 
 
 update : Action -> Model -> (Model, Effects Action)
 update action model =
-  (model, Effects.none)
+  case action of
+    Nop ->
+      (model, Effects.none)
+
+    Load ->
+      (model, Http.get Decode.string "/api/" |> Task.toMaybe |> Task.map (\_ -> Nop) |> Effects.task)

@@ -23,4 +23,6 @@ _testmain.go
 *.test
 *.prof
 
-*/elm-stuff
+elm-stuff/
+client/out/
+server/out/

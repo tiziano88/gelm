@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"os"
 	"os/exec"
+	"syscall"
 
 	"golang.org/x/exp/inotify"
 )
@@ -31,36 +32,39 @@ func main() {
 	}
 
 	var elm *exec.Cmd
-	var server *exec.Cmd
 
 	start := func() {
-		elm = exec.Command("elm", "reactor", fmt.Sprintf("--port=%v", elmPort))
-		elm.Dir = "client"
+		elm = exec.Command("bash", "run")
+		//elm.Dir = "server/out"
+		elm.Stdin = os.Stdin
+		elm.Stdout = os.Stdout
+		elm.Stderr = os.Stdout
 		err = elm.Start()
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		server = exec.Command("go", "run", "main.go")
-		server.Dir = "server"
-		err = server.Start()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		log.Printf("client: %#v, server: %#v", elm, server)
+		log.Printf("PID: %v", elm.Process.Pid)
 	}
 
 	kill := func() {
+		log.Printf("killing PID: %v", elm.Process.Pid)
+
 		err = elm.Process.Kill()
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		err = server.Process.Kill()
+		err = elm.Process.Signal(syscall.SIGKILL)
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		err = elm.Process.Release()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		elm = nil
 	}
 
 	start()

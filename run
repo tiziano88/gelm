@@ -1,1 +1,3 @@
-go run run.go
+./build
+
+(cd server && out/server)
