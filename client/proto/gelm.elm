@@ -31,19 +31,39 @@ enumEncoder v =
     JE.string <| lookup v
 
 
+type alias SubMessage =
+  { id : Int
+  }
+
+
+subMessageDecoder : JD.Decoder SubMessage
+subMessageDecoder =
+  JD.object1 SubMessage
+    ("id" := JD.int)
+
+
+subMessageEncoder : SubMessage -> JE.Value
+subMessageEncoder v =
+  JE.object
+    [ ("id", JE.int v.id)
+    ]
+
+
 type alias Message =
   { id : Int
   , fieldWithLongName : String
   , enum : Enum
+  , subMessage : SubMessage
   }
 
 
 messageDecoder : JD.Decoder Message
 messageDecoder =
-  JD.object3 Message
+  JD.object4 Message
     ("id" := JD.int)
     ("fieldWithLongName" := JD.string)
     ("enum" := enumDecoder)
+    ("subMessage" := subMessageDecoder)
 
 
 messageEncoder : Message -> JE.Value
@@ -52,6 +72,7 @@ messageEncoder v =
     [ ("id", JE.int v.id)
     , ("fieldWithLongName", JE.string v.fieldWithLongName)
     , ("enum", enumEncoder v.enum)
+    , ("subMessage", subMessageEncoder v.subMessage)
     ]
 
 

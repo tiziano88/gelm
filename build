@@ -1,1 +1,1 @@
-protoc --go_out=./server/ --elm_out=./client/ ./proto/*.proto
+~/src/protobuf/src/protoc --go_out=./server/ --elm_out=./client/ ./proto/*.proto

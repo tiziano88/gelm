@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "proto3";
 
 enum Enum {
   ENUM_VALUE_DEFAULT = 0;
@@ -7,9 +7,15 @@ enum Enum {
   ENUM_VALUE_2 = 2;
 }
 
-message Message {
-  optional int64 id = 1;
-  optional string field_with_long_name = 2;
+message SubMessage {
+  int64 id = 1;
+}
 
-  optional Enum enum = 3;
+message Message {
+  int64 id = 1;
+  string field_with_long_name = 2;
+
+  Enum enum = 3;
+
+  SubMessage sub_message = 4;
 }

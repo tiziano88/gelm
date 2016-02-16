@@ -13,7 +13,7 @@ var marshaler = &jsonpb.Marshaler{
 	EnumsAsInts:  false,
 	EmitDefaults: true,
 	Indent:       "  ",
-	OrigName:     true,
+	OrigName:     false,
 }
 
 func main() {
@@ -22,9 +22,12 @@ func main() {
 	m.Get("/", Handler)
 
 	http.Handle("/", m)
+	http.ListenAndServe(":8080", nil)
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	m := &pb.Message{}
+	m := &pb.Message{
+		FieldWithLongName: "hello",
+	}
 	marshaler.Marshal(w, m)
 }
