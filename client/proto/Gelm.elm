@@ -5,6 +5,47 @@ import Json.Decode as JD exposing ((:=))
 import Json.Encode as JE
 
 
+optional : JD.Decoder a -> JD.Decoder (Maybe a)
+optional decoder =
+  JD.oneOf
+    [ JD.map Just decoder
+    , JD.succeed Nothing
+    ]
+
+
+withDefault : a -> JD.Decoder a -> JD.Decoder a
+withDefault default decoder =
+  JD.oneOf
+    [ decoder
+    , JD.succeed default
+    ]
+
+
+intField : String -> JD.Decoder Int
+intField name =
+  withDefault 0 (name := JD.int)
+
+
+boolField : String -> JD.Decoder Bool
+boolField name =
+  withDefault False (name := JD.bool)
+
+
+stringField : String -> JD.Decoder String
+stringField name =
+  withDefault "" (name := JD.string)
+
+
+messageField : JD.Decoder a -> String -> JD.Decoder (Maybe a)
+messageField decoder name =
+  optional (name := decoder)
+
+
+enumField : JD.Decoder a -> String -> JD.Decoder a
+enumField decoder name =
+  (name := decoder)
+
+
 type Enum
   = EnumValueDefault -- 0
   | EnumValue1 -- 1
@@ -42,7 +83,7 @@ type alias SubMessage =
 subMessageDecoder : JD.Decoder SubMessage
 subMessageDecoder =
   JD.object1 SubMessage
-    ("id" := JD.int)
+    (intField "id")
 
 
 subMessageEncoder : SubMessage -> JE.Value
@@ -56,17 +97,19 @@ type alias Message =
   { id : Int
   , fieldWithLongName : String
   , enum : Enum
-  , subMessage : SubMessage
+  , subMessage : Maybe SubMessage
+  , boolField : Bool
   }
 
 
 messageDecoder : JD.Decoder Message
 messageDecoder =
-  JD.object4 Message
-    ("id" := JD.int)
-    ("fieldWithLongName" := JD.string)
-    ("enum" := enumDecoder)
-    ("subMessage" := subMessageDecoder)
+  JD.object5 Message
+    (intField "id")
+    (stringField "fieldWithLongName")
+    (enumField enumDecoder "enum")
+    (messageField subMessageDecoder "subMessage")
+    (boolField "boolField")
 
 
 messageEncoder : Message -> JE.Value
@@ -75,7 +118,7 @@ messageEncoder v =
     [ ("id", JE.int v.id)
     , ("fieldWithLongName", JE.string v.fieldWithLongName)
     , ("enum", enumEncoder v.enum)
-    , ("subMessage", subMessageEncoder v.subMessage)
+    , ("boolField", JE.bool v.boolField)
     ]
 
 

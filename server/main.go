@@ -13,7 +13,7 @@ import (
 
 var marshaler = &jsonpb.Marshaler{
 	EnumsAsInts:  false,
-	EmitDefaults: true,
+	EmitDefaults: false,
 	Indent:       "  ",
 	OrigName:     false,
 }
@@ -40,8 +40,12 @@ func main() {
 
 func Handler(w http.ResponseWriter, r *http.Request) {
 	m := &pb.Message{
-		Id:                123,
 		FieldWithLongName: "hello1",
+		Enum:              pb.Enum_ENUM_VALUE_2,
+		SubMessage: &pb.SubMessage{
+			Id: 222,
+		},
+		BoolField: true,
 	}
 	log.Printf("v: %v", m)
 	marshaler.Marshal(w, m)

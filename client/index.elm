@@ -4,7 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, on, targetValue)
 import Http
-import Json.Decode as Decode exposing ((:=))
+import Json.Decode as Decode
 import StartApp
 import Task exposing (..)
 
@@ -23,20 +23,27 @@ app =
 main = app.html
 
 
+port tasks : Signal (Task.Task Effects.Never ())
+port tasks =
+  app.tasks
+
+
 type alias Model =
   { test : Int
+  , s : Maybe Gelm.Message
   }
 
 
 newModel : Model
 newModel =
   { test = 123
+  , s = Nothing
   }
 
 
 init : (Model, Effects Action)
 init =
-  (newModel, Effects.none)
+  (newModel, get)
 
 
 (=>) = (,)
@@ -44,21 +51,35 @@ init =
 
 view : Signal.Address Action -> Model -> Html
 view address model =
-  div
-    [ onClick address Load ]
-    [ text "Hello World 2" ]
+  div []
+    [ a
+      [ onClick address Load ]
+      [ text "Hello World 3" ]
+    , text <| (toString model)
+    ]
 
 
 type Action
   = Nop
   | Load
+  | Resp (Maybe Gelm.Message)
 
 
 update : Action -> Model -> (Model, Effects Action)
 update action model =
-  case action of
+  case (Debug.watch "action" action) of
     Nop ->
       (model, Effects.none)
 
+    Resp x ->
+      ({ model | s = x }, Effects.none)
+
     Load ->
-      (model, Http.get Decode.string "/api/" |> Task.toMaybe |> Task.map (\_ -> Nop) |> Effects.task)
+      ({ model | test = 222 }, get)
+
+get : Effects Action
+get =
+  Http.get Gelm.messageDecoder "/api/"
+    |> Task.toMaybe
+    |> Task.map Resp
+    |> Effects.task

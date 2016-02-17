@@ -1,3 +1,1 @@
-./build
-
-(cd server && out/server)
+./build && (cd server && out/server)

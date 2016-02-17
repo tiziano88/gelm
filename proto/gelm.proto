@@ -8,14 +8,16 @@ enum Enum {
 }
 
 message SubMessage {
-  int64 id = 1;
+  int32 id = 1;
 }
 
 message Message {
-  int64 id = 1;
+  int32 id = 1;
   string field_with_long_name = 2;
 
   Enum enum = 3;
 
   SubMessage sub_message = 4;
+
+  bool bool_field = 5;
 }
