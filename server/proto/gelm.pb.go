@@ -23,10 +23,6 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-// This is a compile-time assertion to ensure that this generated file
-// is compatible with the proto package it is being compiled against.
-const _ = proto.ProtoPackageIsVersion1
-
 type Enum int32
 
 const (
@@ -62,10 +58,10 @@ func (*SubMessage) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{
 
 type Message struct {
 	Id                int32       `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	FieldWithLongName string      `protobuf:"bytes,2,opt,name=field_with_long_name,json=fieldWithLongName" json:"field_with_long_name,omitempty"`
+	FieldWithLongName string      `protobuf:"bytes,2,opt,name=field_with_long_name" json:"field_with_long_name,omitempty"`
 	Enum              Enum        `protobuf:"varint,3,opt,name=enum,enum=Enum" json:"enum,omitempty"`
-	SubMessage        *SubMessage `protobuf:"bytes,4,opt,name=sub_message,json=subMessage" json:"sub_message,omitempty"`
-	BoolField         bool        `protobuf:"varint,5,opt,name=bool_field,json=boolField" json:"bool_field,omitempty"`
+	SubMessage        *SubMessage `protobuf:"bytes,4,opt,name=sub_message" json:"sub_message,omitempty"`
+	BoolField         bool        `protobuf:"varint,5,opt,name=bool_field" json:"bool_field,omitempty"`
 }
 
 func (m *Message) Reset()                    { *m = Message{} }
