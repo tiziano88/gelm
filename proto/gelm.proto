@@ -20,4 +20,18 @@ message Message {
   SubMessage sub_message = 4;
 
   bool bool_field = 5;
+
+  User user = 6;
+}
+
+message Address {
+  string line_1 = 1;
+  string line_2 = 2;
+  string city = 3;
+  string country = 4;
+}
+
+message User {
+  string name = 1;
+  Address address = 2;
 }

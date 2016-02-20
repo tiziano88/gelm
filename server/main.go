@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/gorilla/pat"
@@ -12,14 +11,12 @@ import (
 )
 
 var marshaler = &jsonpb.Marshaler{
-	EnumsAsInts:  false,
-	EmitDefaults: false,
-	Indent:       "  ",
-	OrigName:     false,
+	Indent:   "  ",
+	OrigName: false,
 }
 
 func main() {
-	log.Print("starting server 33x")
+	log.Print("starting server")
 
 	m := pat.New()
 
@@ -29,13 +26,9 @@ func main() {
 	http.Handle("/", m)
 
 	s := &http.Server{
-		Addr:         "0.0.0.0:1234",
-		ReadTimeout:  1 * time.Second,
-		WriteTimeout: 1 * time.Second,
+		Addr: "0.0.0.0:1234",
 	}
-	s.SetKeepAlivesEnabled(false)
 	s.ListenAndServe()
-	s.SetKeepAlivesEnabled(false)
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
@@ -46,6 +39,13 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			Id: 222,
 		},
 		BoolField: true,
+		User: &pb.User{
+			Name: "name",
+			Address: &pb.Address{
+				Line_1: "line1",
+				City:   "London",
+			},
+		},
 	}
 	log.Printf("v: %v", m)
 	marshaler.Marshal(w, m)

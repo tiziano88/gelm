@@ -99,17 +99,19 @@ type alias Message =
   , enum : Enum
   , subMessage : Maybe SubMessage
   , boolField : Bool
+  , user : Maybe User
   }
 
 
 messageDecoder : JD.Decoder Message
 messageDecoder =
-  JD.object5 Message
+  JD.object6 Message
     (intField "id")
     (stringField "fieldWithLongName")
     (enumField enumDecoder "enum")
     (messageField subMessageDecoder "subMessage")
     (boolField "boolField")
+    (messageField userDecoder "user")
 
 
 messageEncoder : Message -> JE.Value
@@ -119,6 +121,53 @@ messageEncoder v =
     , ("fieldWithLongName", JE.string v.fieldWithLongName)
     , ("enum", enumEncoder v.enum)
     , ("boolField", JE.bool v.boolField)
+    ]
+
+
+type alias Address =
+  { line1 : String
+  , line2 : String
+  , city : String
+  , country : String
+  }
+
+
+addressDecoder : JD.Decoder Address
+addressDecoder =
+  JD.object4 Address
+    (stringField "line1")
+    (stringField "line2")
+    (stringField "city")
+    (stringField "country")
+
+
+addressEncoder : Address -> JE.Value
+addressEncoder v =
+  JE.object
+    [ ("line1", JE.string v.line1)
+    , ("line2", JE.string v.line2)
+    , ("city", JE.string v.city)
+    , ("country", JE.string v.country)
+    ]
+
+
+type alias User =
+  { name : String
+  , address : Maybe Address
+  }
+
+
+userDecoder : JD.Decoder User
+userDecoder =
+  JD.object2 User
+    (stringField "name")
+    (messageField addressDecoder "address")
+
+
+userEncoder : User -> JE.Value
+userEncoder v =
+  JE.object
+    [ ("name", JE.string v.name)
     ]
 
 
