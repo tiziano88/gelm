@@ -56,27 +56,28 @@ view address model =
       [ onClick address Load ]
       [ text "Hello World 3" ]
     , text <| (toString model)
-    , userWidget address model
+    , optional (dataWidget address) model.data
     ]
 
-userWidget : Signal.Address Action -> Model -> Html
-userWidget address model =
-  case (model.data) of
-    Just data ->
-      div []
-        [ input
-          [ value data.fieldWithLongName
-          , on "input" targetValue (\_ -> Signal.message address Nop) ] []
-        ]
 
-    Nothing ->
-      text "nothing"
+optional : (a -> Html) -> Maybe a -> Html
+optional f d =
+  Maybe.map f d |> Maybe.withDefault (text "null")
 
+
+dataWidget : Signal.Address Action -> Gelm.Message -> Html
+dataWidget address data =
+  div []
+    [ input
+      [ value data.fieldWithLongName
+      , on "input" targetValue (Signal.message address << Update) ] []
+    ]
 
 
 type Action
   = Nop
   | Load
+  | Update String
   | Resp (Maybe Gelm.Message)
 
 
@@ -88,6 +89,13 @@ update action model =
 
     Resp x ->
       ({ model | data = x }, Effects.none)
+
+    Update f ->
+      case model.data of
+        Just data ->
+          ({ model | data = Just { data | fieldWithLongName = f } }, Effects.none)
+        Nothing ->
+          (model, Effects.none)
 
     Load ->
       ({ model | test = 222 }, get)
