@@ -30,14 +30,14 @@ port tasks =
 
 type alias Model =
   { test : Int
-  , s : Maybe Gelm.Message
+  , data : Maybe Gelm.Message
   }
 
 
 newModel : Model
 newModel =
   { test = 123
-  , s = Nothing
+  , data = Nothing
   }
 
 
@@ -56,7 +56,22 @@ view address model =
       [ onClick address Load ]
       [ text "Hello World 3" ]
     , text <| (toString model)
+    , userWidget address model
     ]
+
+userWidget : Signal.Address Action -> Model -> Html
+userWidget address model =
+  case (model.data) of
+    Just data ->
+      div []
+        [ input
+          [ value data.fieldWithLongName
+          , on "input" targetValue (\_ -> Signal.message address Nop) ] []
+        ]
+
+    Nothing ->
+      text "nothing"
+
 
 
 type Action
@@ -72,7 +87,7 @@ update action model =
       (model, Effects.none)
 
     Resp x ->
-      ({ model | s = x }, Effects.none)
+      ({ model | data = x }, Effects.none)
 
     Load ->
       ({ model | test = 222 }, get)
